@@ -117,13 +117,55 @@ class GridFieldStatefulList extends UnsavedRelationList {
      */
     public function removeMany($items) {
         //Remove from the state
-        $this->gridField->State->StatefulListData=array_diff($this->gridField->State->StatefulListData, $items);
+        $stateItems=$this->gridField->State->StatefulListData->toArray();
+        if($stateItems && count($stateItems)>0) {
+            foreach($items as $item) {
+                foreach($stateItems as $key=>$value) {
+                    $id=$item;
+                    if(is_object($item)) {
+                        $id=$item->ID;
+                    }
+                    
+                    if($value['ID']==$id) {
+                        unset($stateItems[$key]);
+                        break;
+                    }
+                }
+            }
+             
+            $this->gridField->State->StatefulListData=$stateItems;
+        }
         
         //Remove from the source list
         parent::removeMany($items);
         
         return $this;
     }
+
+	/**
+	 * Remove this item from this list
+	 * @param {mixed} $item 
+	 */
+	public function remove($item) {
+	    $id=$item;
+	    if(is_object($item)) {
+	        $id=$item->ID;
+	    }
+	    
+        $stateItems=$this->gridField->State->StatefulListData->toArray();
+        if($stateItems && count($stateItems)>0) {
+	        foreach($stateItems as $key=>$value) {
+	            if($value['ID']==$id) {
+	                unset($stateItems[$key]);
+	                break;
+	            }
+	        }
+	        
+	        $this->gridField->State->StatefulListData=$stateItems;
+	    }
+	    
+		parent::remove($id);
+	}
     
     /**
      * Removes items from this list which are equal.
