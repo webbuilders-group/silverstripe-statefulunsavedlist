@@ -11,6 +11,18 @@ class GridFieldStatefulList extends UnsavedRelationList {
     public function __construct(GridField $gridField, $baseClass, $relationName, $dataClass) {
         $this->gridField=$gridField;
         
+        $this->refreshFromState();
+        
+        parent::__construct($baseClass, $relationName, $dataClass);
+    }
+    
+    /**
+     * Refreshes the list from the state
+     */
+    public function refreshFromState() {
+        //Empty the local cache
+        parent::removeAll();
+        
         $this->_isSetup=true;
         
         //Populate from state
@@ -18,32 +30,28 @@ class GridFieldStatefulList extends UnsavedRelationList {
         if(!empty($stateList)) {
             $stateList=$stateList->toArray();
             
-            foreach($this->gridField->State->StatefulListData as $item) {
-                var_dump($item);exit;
+            foreach($stateList as $item) {
                 $this->push($item['ID'], $item['extraFields']);
             }
         }else {
             $this->gridField->State->StatefulListData=array();
-            
+        
             //If there are items in the unsaved list ensure we add them to this list
             if($sourceList->count()>0) {
                 $items=$sourceList->getField('items');
                 $extraFields=$sourceList->getField('extraFields');
-                
+        
                 foreach($items as $key=>$value) {
                     if(is_object($value)) {
                         $value=$value->ID;
                     }
-                    
+        
                     $this->push($value, $extraFields[$key]);
                 }
             }
         }
         
         $this->_isSetup=false;
-        
-        
-        parent::__construct($baseClass, $relationName, $dataClass);
     }
     
     /**
@@ -56,11 +64,22 @@ class GridFieldStatefulList extends UnsavedRelationList {
                 $item=$item->ID;
             }
             
+            
             $stateList=$this->gridField->State->StatefulListData->toArray();
-            $stateList[]=array(
-                            'ID'=>$item,
-                            'extraFields'=>$extraFields
-                        );
+            
+            //Verify we're not adding a duplicate
+            if($stateList && is_array($stateList) && count($stateList)>0) {
+                foreach($stateList as $stateItem) {
+                    if($stateItem['ID']==$item) {
+                        return;
+                    }
+                }
+            }
+            
+            $tmp=new stdClass();
+            $tmp->ID=$item;
+            $tmp->extraFields=$extraFields;
+            $stateList[]=$tmp;
             
             $this->gridField->State->StatefulListData=$stateList;
         }
@@ -207,6 +226,15 @@ class GridFieldStatefulList extends UnsavedRelationList {
      */
     public function dbObject($fieldName) {
         return parent::dbObject($fieldName);
+    }
+    
+    /**
+     * Return the first DataObject with the given ID
+     * @param {int} $id ID of the object to retrieve from the list
+     * @return {DataObject} Object fetched
+     */
+    public function byID($id) {
+        return DataList::create($this->dataClass())->byId($id);
     }
     
     /**
