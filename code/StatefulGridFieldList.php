@@ -1,5 +1,5 @@
 <?php
-class GridFieldStatefulList extends UnsavedRelationList {
+class StatefulGridFieldList extends UnsavedRelationList {
     protected $gridField;
     
     private $_isSetup=false;
@@ -87,7 +87,7 @@ class GridFieldStatefulList extends UnsavedRelationList {
     /**
      * Add a number of items to the relation.
      * @param {array} $items Items to add, as either DataObjects or IDs.
-     * @return {GridFieldStatefulList}
+     * @return {StatefulGridFieldList}
      */
     public function addMany($items) {
         foreach($items as $item) {

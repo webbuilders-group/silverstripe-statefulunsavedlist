@@ -3,13 +3,13 @@ class StatefulGridFieldState extends GridState {
     private $_stateSessionKey;
     
     /**
-     * Sets the value of the state, if the list is an instance of GridFieldStatefulList than the list is refreshed from the state
+     * Sets the value of the state, if the list is an instance of StatefulGridFieldList than the list is refreshed from the state
      * @param {string} $state Value to be set
      */
     public function setValue($value) {
         parent::setValue($value);
         
-        if($this->grid && $this->grid->getList() instanceof GridFieldStatefulList) {
+        if($this->grid && $this->grid->getList() instanceof StatefulGridFieldList) {
             $this->grid->getList()->refreshFromState();
         }
     }

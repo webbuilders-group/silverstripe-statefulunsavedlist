@@ -15,12 +15,12 @@ class StatefulGridField extends GridField {
     }
     
     /**
-     * Return a Link to this field, if the list is an instance of GridFieldStatefulList the session key for the state is appended to the url
+     * Return a Link to this field, if the list is an instance of StatefulGridFieldList the session key for the state is appended to the url
      * @param {string} $action Action to append to the url
      * @return {string} Relative link to this form field
      */
     public function Link($action=null) {
-        if($this->list instanceof GridFieldStatefulList) {
+        if($this->list instanceof StatefulGridFieldList) {
             return Controller::join_links(parent::Link($action), '?'.strtolower($this->name).'_skey='.$this->state->getSessionKey());
         }
         
@@ -28,12 +28,12 @@ class StatefulGridField extends GridField {
     }
     
     /**
-	 * Set the datasource. If the list is an instance of UnsavedRelationList the list is converted to a GridFieldStatefulList. If the state is empty then it tries to restore the state from the session.
+	 * Set the datasource. If the list is an instance of UnsavedRelationList the list is converted to a StatefulGridFieldList. If the state is empty then it tries to restore the state from the session.
 	 * @param {SS_List} $list List to use in the Grid
 	 */
 	public function setList(SS_List $list) {
         if($list instanceof UnsavedRelationList) {
-            $list=new GridFieldStatefulList($this, $list->getField('baseClass'), $list->getField('relationName'), $list->dataClass());
+            $list=new StatefulGridFieldList($this, $list->getField('baseClass'), $list->getField('relationName'), $list->dataClass());
             
             $stateValue=$this->state->getData()->toArray();
             if(empty($stateValue) && !empty($this->form)) {
@@ -45,13 +45,13 @@ class StatefulGridField extends GridField {
     }
     
     /**
-     * Set the container form. If the list is an instance of GridFieldStatefulList and the state is empty it tries to restore the state from the session.
+     * Set the container form. If the list is an instance of StatefulGridFieldList and the state is empty it tries to restore the state from the session.
      * @param {Form} $form Form to be used
      */
     public function setForm($form) {
         $return=parent::setForm($form);
         
-        if($this->list instanceof GridFieldStatefulList) {
+        if($this->list instanceof StatefulGridFieldList) {
             $stateValue=$this->state->getData()->toArray();
             if(empty($stateValue) && !empty($this->form)) {
                 $this->state->restoreFromSession();
