@@ -73,10 +73,10 @@ class StatefulGridFieldList extends UnsavedRelationList {
                 }
             }
             
-            $tmp=new stdClass();
-            $tmp->ID=$item;
-            $tmp->extraFields=$extraFields;
-            $stateList[]=$tmp;
+            $stateList[]=array(
+                            'ID'=>$item,
+                            'extraFields'=>$extraFields
+                        );
             
             $this->gridField->State->StatefulListData=$stateList;
         }
@@ -172,7 +172,9 @@ class StatefulGridFieldList extends UnsavedRelationList {
      */
     public function removeDuplicates($field='ID') {
         //Remove Duplicates from the state
-        $this->gridField->State->StatefulListData=array_unique($this->gridField->State->StatefulListData);//@TODO This likely will not work at all needs to be tested
+        if(isset($this->gridField->State->StatefulListData)) {
+            $this->gridField->State->StatefulListData=array_unique($this->gridField->State->StatefulListData->toArray(), SORT_REGULAR);
+        }
         
         //Remove duplicates from the source list
         parent::removeDuplicates($field);
