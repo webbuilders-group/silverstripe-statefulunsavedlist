@@ -26,26 +26,23 @@ class GridFieldStatefulList extends UnsavedRelationList {
         $this->_isSetup=true;
         
         //Populate from state
-        $stateList=$this->gridField->State->StatefulListData;
-        if(!empty($stateList)) {
-            $stateList=$stateList->toArray();
-            
-            foreach($stateList as $item) {
-                $this->push($item['ID'], $item['extraFields']);
-            }
-        }else {
-            $this->gridField->State->StatefulListData=array();
-        
-            //If there are items in the unsaved list ensure we add them to this list
-            if($sourceList->count()>0) {
+        if(isset($this->gridField->State->StatefulListData)) {
+            $stateList=$this->gridField->State->StatefulListData;
+            if(!empty($stateList)) {
+                $stateList=$stateList->toArray();
+                
+                foreach($stateList as $item) {
+                    $this->push($item['ID'], $item['extraFields']);
+                }
+            }else if($sourceList->count()>0) {
                 $items=$sourceList->getField('items');
                 $extraFields=$sourceList->getField('extraFields');
-        
+                
                 foreach($items as $key=>$value) {
                     if(is_object($value)) {
                         $value=$value->ID;
                     }
-        
+                    
                     $this->push($value, $extraFields[$key]);
                 }
             }
@@ -105,7 +102,9 @@ class GridFieldStatefulList extends UnsavedRelationList {
      */
     public function removeAll() {
         //Clear the state
-        $this->gridField->State->StatefulListData=array();
+        if(isset($this->gridField->State->StatefullListData)) {
+            $this->gridField->State->StatefulListData=array();
+        }
         
         //Remove all from the source list
         parent::removeAll();
@@ -173,7 +172,7 @@ class GridFieldStatefulList extends UnsavedRelationList {
      */
     public function removeDuplicates($field='ID') {
         //Remove Duplicates from the state
-        $this->gridField->State->StatefulListData=array_unique($this->gridField->State->StatefulListData);
+        $this->gridField->State->StatefulListData=array_unique($this->gridField->State->StatefulListData);//@TODO This likely will not work at all needs to be tested
         
         //Remove duplicates from the source list
         parent::removeDuplicates($field);
@@ -274,6 +273,7 @@ class GridFieldStatefulList extends UnsavedRelationList {
      * Return the first DataObject with the given ID
      * @param {int} $id ID of the object to retrieve from the list
      * @return {DataObject} Object fetched
+     * @TODO Needs to check if an element is actually in the list, this in it's current state isn't a great idea
      */
     public function byID($id) {
         return DataList::create($this->dataClass())->byId($id);
