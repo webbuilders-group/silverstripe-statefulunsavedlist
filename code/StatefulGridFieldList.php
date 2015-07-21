@@ -188,95 +188,14 @@ class StatefulGridFieldList extends UnsavedRelationList {
     }
     
     /**
-     * Save all the items in this list into the RelationList
-     * @param {RelationList} $list
-     */
-    public function changeToList(RelationList $list) {
-        parent::changeToList($list);
-    }
-    
-    /**
-     * Get the dataClass name for this relation, ie the DataObject ClassName
-     * @return {string}
-     */
-    public function dataClass() {
-        return parent::dataClass();
-    }
-    
-    /**
-     * Returns an Iterator for this relation.
-     * @return {ArrayIterator}
-     */
-    public function getIterator() {
-        return parent::getIterator();
-    }
-    
-    /**
-     * Return an array of the actual items that this relation contains at this stage. This is when the query is actually executed.
-     * @return {array}
-     */
-    public function toArray() {
-        return parent::toArray();
-    }
-    
-    /**
-     * Returns an array with both the keys and values set to the IDs of the records in this list. Does not return the IDs for unsaved DataObjects
-     * @return {array}
-     */
-    public function getIDList() {
-        return parent::getIDList();
-    }
-    
-    /**
-     * Returns the first item in the list
-     * @return {mixed}
-     */
-    public function first() {
-        return parent::first();
-    }
-    
-    /**
-     * Returns the last item in the list
-     * @return {mixed}
-     */
-    public function last() {
-        return parent::last();
-    }
-    
-    /**
-     * Returns an array of a single field value for all items in the list.
-     * @param {string} $colName
-     * @return {array}
-     */
-    public function column($colName='ID') {
-        return parent::column($colName);
-    }
-    
-    /**
-     * Returns a copy of this list with the relationship linked to the given foreign ID.
-     * @param {int|array} $id An ID or an array of IDs.
-     */
-    public function forForeignID($id) {
-        return parent::forForeignID($id);
-    }
-    
-    /**
-     * Return the DBField object that represents the given field on the related class.
-     * @param {string} $fieldName Name of the field
-     * @return {DBField} The field as a DBField object
-     */
-    public function dbObject($fieldName) {
-        return parent::dbObject($fieldName);
-    }
-    
-    /**
      * Return the first DataObject with the given ID
      * @param {int} $id ID of the object to retrieve from the list
      * @return {DataObject} Object fetched
-     * @TODO Needs to check if an element is actually in the list, this in it's current state isn't a great idea
      */
     public function byID($id) {
-        return DataList::create($this->dataClass())->byId($id);
+        if(array_search($id, $this->items)!==false) {
+            return DataList::create($this->dataClass())->byId($id);
+        }
     }
     
     /**
