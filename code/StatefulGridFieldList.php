@@ -198,5 +198,13 @@ class StatefulGridFieldList extends UnsavedRelationList {
                         ->filter('ID', $this->getIDList())
                         ->dataQuery();
     }
+    
+    /**
+     * Gets the relationship name
+     * @return {string} Name of the relationship used
+     */
+    public function getRelationName() {
+        return $this->relationName;
+    }
 }
 ?>
