@@ -15,6 +15,20 @@ class StatefulGridField extends GridField {
     }
     
     /**
+     * Sets the gridfield config ensuring that the save handler is in place
+	 * @param {GridFieldConfig} $config
+	 * @return {GridField}
+	 */
+	public function setConfig(GridFieldConfig $config) {
+        parent::setConfig($config);
+        
+        //Force the StatefulGridFieldListSaveHandler into the config
+        $config->addComponent(new StatefulGridFieldListSaveHandler());
+        
+        return $this;
+    }
+    
+    /**
      * Return a Link to this field, if the list is an instance of StatefulGridFieldList the session key for the state is appended to the url
      * @param {string} $action Action to append to the url
      * @return {string} Relative link to this form field
