@@ -34,17 +34,6 @@ class StatefulGridFieldList extends UnsavedRelationList {
                 foreach($stateList as $item) {
                     $this->push($item['ID'], $item['extraFields']);
                 }
-            }else if($sourceList->count()>0) {
-                $items=$sourceList->getField('items');
-                $extraFields=$sourceList->getField('extraFields');
-                
-                foreach($items as $key=>$value) {
-                    if(is_object($value)) {
-                        $value=$value->ID;
-                    }
-                    
-                    $this->push($value, $extraFields[$key]);
-                }
             }
         }
         
