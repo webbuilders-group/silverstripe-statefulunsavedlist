@@ -1,6 +1,6 @@
 {
     "name": "webbuilders-group/silverstripe-statefulunsavedlist",
-    "description": "GridField component that allows unsaved relation lists for many_many relationships to be stored in the GridField's state and session",
+    "description": "GridField component that allows unsaved relation lists for many_many when managing existing objects on the right side of the relationship relationships to be stored in the GridField's state and session",
     "type": "silverstripe-module",
     "keywords": ["silverstripe", "gridfield", "unsaved", "list", "stateful"],
     "license": "BSD-3-Clause",

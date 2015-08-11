@@ -1,6 +1,6 @@
 GridField Stateful Unsaved List
 =================
-GridField component that allows unsaved relation lists for many_many relationships to be stored in the GridField's state and session.
+GridField component that allows unsaved relation lists for many_many relationships when managing existing objects on the right side of the relationship to be stored in the GridField's state and session.
 
 ## Maintainer Contact
 * Ed Chipman ([UndefinedOffset](https://github.com/UndefinedOffset))
