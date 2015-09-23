@@ -45,10 +45,12 @@ class StatefulGridFieldState extends GridState {
 	public function Value() {
 		$value=parent::Value();
 		
-		//Cache in the session
-		$sessionKey=$this->getSessionKey();
-		Session::set('FormInfo.'.$this->grid->getForm()->FormName().'.'.$this->grid->getName().'.state.key', $sessionKey);
-		Session::set('FormInfo.'.$this->grid->getForm()->FormName().'.'.$this->grid->getName().'.state.value', $value);
+		if($this->grid->getForm()) {
+    		//Cache in the session
+    		$sessionKey=$this->getSessionKey();
+    		Session::set('FormInfo.'.$this->grid->getForm()->FormName().'.'.$this->grid->getName().'.state.key', $sessionKey);
+    		Session::set('FormInfo.'.$this->grid->getForm()->FormName().'.'.$this->grid->getName().'.state.value', $value);
+		}
 		
 		return $value;
 	}
