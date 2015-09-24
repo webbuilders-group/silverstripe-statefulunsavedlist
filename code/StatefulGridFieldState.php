@@ -26,8 +26,13 @@ class StatefulGridFieldState extends GridState {
                 if(!empty($urlSessionKey)) {
                     $this->_stateSessionKey=$urlSessionKey;
                 }else {
-                    //No key so generate a new one
-                    $this->_stateSessionKey=sha1(uniqid($this->name));
+                    $postSessionKey=Controller::curr()->getRequest()->postVar($this->grid->getName().'_skey');
+                    if(!empty($postSessionKey)) {
+                        $this->_stateSessionKey=$postSessionKey;
+                    }else {
+                        //No key so generate a new one
+                        $this->_stateSessionKey=sha1(uniqid($this->name));
+                    }
                 }
             }else {
                 //No key so generate a new one
@@ -74,5 +79,17 @@ class StatefulGridFieldState extends GridState {
     	    }
 	    }
 	}
+}
+
+class StatefulGridFieldState_Component extends GridState_Component {
+    public function getHTMLFragments($gridField) {
+        $fragments=parent::getHTMLFragments($gridField);
+        
+        $state=$gridField->getState(false);
+        $fragments['before'].='<input type="hidden" name="'.$gridField->getName().'_skey" value="'.Convert::raw2att($gridField->getState(false)->getSessionKey()).'"/>';
+        
+        
+        return $fragments;
+    }
 }
 ?>

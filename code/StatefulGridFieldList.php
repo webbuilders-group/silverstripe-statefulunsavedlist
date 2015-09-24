@@ -20,24 +20,26 @@ class StatefulGridFieldList extends UnsavedRelationList {
      * Refreshes the list from the state
      */
     public function refreshFromState() {
-        //Empty the local cache
-        parent::removeAll();
-        
-        $this->_isSetup=true;
-        
-        //Populate from state
-        if(isset($this->gridField->State->StatefulListData)) {
-            $stateList=$this->gridField->State->StatefulListData;
-            if(!empty($stateList)) {
-                $stateList=$stateList->toArray();
-                
-                foreach($stateList as $item) {
-                    $this->push($item['ID'], $item['extraFields']);
+        if($this->count()==0 && $this->gridField->getState(false)) {
+            //Empty the local cache
+            parent::removeAll();
+            
+            $this->_isSetup=true;
+            
+            //Populate from state
+            if(isset($this->gridField->State->StatefulListData)) {
+                $stateList=$this->gridField->State->StatefulListData;
+                if(!empty($stateList)) {
+                    $stateList=$this->gridField->State->StatefulListData;
+                    
+                    foreach($stateList as $item) {
+                        $this->push($item['ID'], $item['extraFields']);
+                    }
                 }
             }
+            
+            $this->_isSetup=false;
         }
-        
-        $this->_isSetup=false;
     }
     
     /**
@@ -96,6 +98,13 @@ class StatefulGridFieldList extends UnsavedRelationList {
         }
         
         //Remove all from the source list
+        parent::removeAll();
+    }
+    
+    /**
+     * Removes all items but maintains the state
+     */
+    public function removeAllKeepState() {
         parent::removeAll();
     }
     

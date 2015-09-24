@@ -8,10 +8,20 @@ class StatefulGridField extends GridField {
      * @param {GridFieldConfig} $config GridField Configuration to use
      */
     public function __construct($name, $title = null, SS_List $dataList = null, GridFieldConfig $config = null) {
+        $this->name=$name;
+        
+        $state=new StatefulGridFieldState($this);
+        //Replace the state with a StatefulGridField_State instance
+        $this->state=$state;
+        
         parent::__construct($name, $title, $dataList, $config);
         
         //Replace the state with a StatefulGridField_State instance
-        $this->state=new StatefulGridFieldState($this);
+        $this->state=$state;
+        
+        $this->getConfig()
+                        ->removeComponentsByType('GridState_Component')
+                        ->addComponent(new StatefulGridFieldState_Component());
     }
     
     /**
@@ -46,7 +56,7 @@ class StatefulGridField extends GridField {
 	 * @param {SS_List} $list List to use in the Grid
 	 */
 	public function setList(SS_List $list) {
-        if($list instanceof UnsavedRelationList) {
+        if($list instanceof UnsavedRelationList && !($list instanceof StatefulGridFieldList)) {
             $list=new StatefulGridFieldList($this, $list->getField('baseClass'), $list->getField('relationName'), $list->dataClass());
             
             $stateValue=$this->state->getData()->toArray();
