@@ -1,5 +1,6 @@
 <?php
-class StatefulGridFieldList extends UnsavedRelationList {
+class StatefulGridFieldList extends UnsavedRelationList
+{
     protected $gridField;
     
     private $_isSetup=false;
@@ -8,7 +9,8 @@ class StatefulGridFieldList extends UnsavedRelationList {
      * Constructor
      * @param {GridField} $gridField GridField Reference
      */
-    public function __construct(GridField $gridField, $baseClass, $relationName, $dataClass) {
+    public function __construct(GridField $gridField, $baseClass, $relationName, $dataClass)
+    {
         $this->gridField=$gridField;
         
         $this->refreshFromState();
@@ -19,20 +21,21 @@ class StatefulGridFieldList extends UnsavedRelationList {
     /**
      * Refreshes the list from the state
      */
-    public function refreshFromState() {
-        if($this->count()==0 && $this->gridField->getState(false)) {
+    public function refreshFromState()
+    {
+        if ($this->count()==0 && $this->gridField->getState(false)) {
             //Empty the local cache
             parent::removeAll();
             
             $this->_isSetup=true;
             
             //Populate from state
-            if(isset($this->gridField->State->StatefulListData)) {
+            if (isset($this->gridField->State->StatefulListData)) {
                 $stateList=$this->gridField->State->StatefulListData;
-                if(!empty($stateList)) {
+                if (!empty($stateList)) {
                     $stateList=$this->gridField->State->StatefulListData;
                     
-                    foreach($stateList as $item) {
+                    foreach ($stateList as $item) {
                         $this->push($item['ID'], $item['extraFields']);
                     }
                 }
@@ -46,9 +49,10 @@ class StatefulGridFieldList extends UnsavedRelationList {
      * Pushes an item onto the end of this list.
      * @param {array|object} $item
      */
-    public function push($item, $extraFields=null) {
-        if(!$this->_isSetup) {
-            if(is_object($item)) {
+    public function push($item, $extraFields=null)
+    {
+        if (!$this->_isSetup) {
+            if (is_object($item)) {
                 $item=$item->ID;
             }
             
@@ -56,9 +60,9 @@ class StatefulGridFieldList extends UnsavedRelationList {
             $stateList=$this->gridField->State->StatefulListData->toArray();
             
             //Verify we're not adding a duplicate
-            if($stateList && is_array($stateList) && count($stateList)>0) {
-                foreach($stateList as $stateItem) {
-                    if($stateItem['ID']==$item) {
+            if ($stateList && is_array($stateList) && count($stateList)>0) {
+                foreach ($stateList as $stateItem) {
+                    if ($stateItem['ID']==$item) {
                         return;
                     }
                 }
@@ -80,10 +84,11 @@ class StatefulGridFieldList extends UnsavedRelationList {
      * @param {array} $items Items to add, as either DataObjects or IDs.
      * @return {StatefulGridFieldList}
      */
-    public function addMany($items) {
-        foreach($items as $item) {
-			$this->add($item);
-		}
+    public function addMany($items)
+    {
+        foreach ($items as $item) {
+            $this->add($item);
+        }
         
         return $this;
     }
@@ -91,9 +96,10 @@ class StatefulGridFieldList extends UnsavedRelationList {
     /**
      * Remove all items from this relation.
      */
-    public function removeAll() {
+    public function removeAll()
+    {
         //Clear the state
-        if(isset($this->gridField->State->StatefullListData)) {
+        if (isset($this->gridField->State->StatefullListData)) {
             $this->gridField->State->StatefulListData=array();
         }
         
@@ -104,7 +110,8 @@ class StatefulGridFieldList extends UnsavedRelationList {
     /**
      * Removes all items but maintains the state
      */
-    public function removeAllKeepState() {
+    public function removeAllKeepState()
+    {
         parent::removeAll();
     }
     
@@ -112,18 +119,19 @@ class StatefulGridFieldList extends UnsavedRelationList {
      * Remove the items from this list with the given IDs
      * @param {array} $idList
      */
-    public function removeMany($items) {
+    public function removeMany($items)
+    {
         //Remove from the state
         $stateItems=$this->gridField->State->StatefulListData->toArray();
-        if($stateItems && count($stateItems)>0) {
-            foreach($items as $item) {
-                foreach($stateItems as $key=>$value) {
+        if ($stateItems && count($stateItems)>0) {
+            foreach ($items as $item) {
+                foreach ($stateItems as $key=>$value) {
                     $id=$item;
-                    if(is_object($item)) {
+                    if (is_object($item)) {
                         $id=$item->ID;
                     }
                     
-                    if($value['ID']==$id) {
+                    if ($value['ID']==$id) {
                         unset($stateItems[$key]);
                         break;
                     }
@@ -139,38 +147,40 @@ class StatefulGridFieldList extends UnsavedRelationList {
         return $this;
     }
 
-	/**
-	 * Remove this item from this list
-	 * @param {mixed} $item 
-	 */
-	public function remove($item) {
-	    $id=$item;
-	    if(is_object($item)) {
-	        $id=$item->ID;
-	    }
-	    
+    /**
+     * Remove this item from this list
+     * @param {mixed} $item 
+     */
+    public function remove($item)
+    {
+        $id=$item;
+        if (is_object($item)) {
+            $id=$item->ID;
+        }
+        
         $stateItems=$this->gridField->State->StatefulListData->toArray();
-        if($stateItems && count($stateItems)>0) {
-	        foreach($stateItems as $key=>$value) {
-	            if($value['ID']==$id) {
-	                unset($stateItems[$key]);
-	                break;
-	            }
-	        }
-	        
-	        $this->gridField->State->StatefulListData=$stateItems;
-	    }
-	    
-		parent::remove($id);
-	}
+        if ($stateItems && count($stateItems)>0) {
+            foreach ($stateItems as $key=>$value) {
+                if ($value['ID']==$id) {
+                    unset($stateItems[$key]);
+                    break;
+                }
+            }
+            
+            $this->gridField->State->StatefulListData=$stateItems;
+        }
+        
+        parent::remove($id);
+    }
     
     /**
      * Removes items from this list which are equal.
      * @param {string} $field unused
      */
-    public function removeDuplicates($field='ID') {
+    public function removeDuplicates($field='ID')
+    {
         //Remove Duplicates from the state
-        if(isset($this->gridField->State->StatefulListData)) {
+        if (isset($this->gridField->State->StatefulListData)) {
             $this->gridField->State->StatefulListData=array_unique($this->gridField->State->StatefulListData->toArray(), SORT_REGULAR);
         }
         
@@ -182,7 +192,8 @@ class StatefulGridFieldList extends UnsavedRelationList {
      * Sets the Relation to be the given ID list. Records will be added and deleted as appropriate.
      * @param {array} $idList List of IDs.
      */
-    public function setByIDList($idList) {
+    public function setByIDList($idList)
+    {
         $this->removeAll();
         $this->addMany($idList);
     }
@@ -192,8 +203,9 @@ class StatefulGridFieldList extends UnsavedRelationList {
      * @param {int} $id ID of the object to retrieve from the list
      * @return {DataObject} Object fetched
      */
-    public function byID($id) {
-        if(array_search($id, $this->items)!==false) {
+    public function byID($id)
+    {
+        if (array_search($id, $this->items)!==false) {
             return DataList::create($this->dataClass())->byId($id);
         }
     }
@@ -202,7 +214,8 @@ class StatefulGridFieldList extends UnsavedRelationList {
      * Wrapper to generate the data query based on the current source list
      * @return {DataQuery}
      */
-    public function dataQuery() {
+    public function dataQuery()
+    {
         return DataList::create($this->dataClass())
                         ->filter('ID', $this->getIDList())
                         ->dataQuery();
@@ -212,8 +225,8 @@ class StatefulGridFieldList extends UnsavedRelationList {
      * Gets the relationship name
      * @return {string} Name of the relationship used
      */
-    public function getRelationName() {
+    public function getRelationName()
+    {
         return $this->relationName;
     }
 }
-?>

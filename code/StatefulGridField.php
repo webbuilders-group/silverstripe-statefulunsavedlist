@@ -1,5 +1,6 @@
 <?php
-class StatefulGridField extends GridField {
+class StatefulGridField extends GridField
+{
     /**
      * Creates a new GridField field
      * @param {string} $name Name of the GridField
@@ -7,7 +8,8 @@ class StatefulGridField extends GridField {
      * @param {SS_List} $dataList Data List to use in the GridField
      * @param {GridFieldConfig} $config GridField Configuration to use
      */
-    public function __construct($name, $title = null, SS_List $dataList = null, GridFieldConfig $config = null) {
+    public function __construct($name, $title = null, SS_List $dataList = null, GridFieldConfig $config = null)
+    {
         $this->name=$name;
         
         $state=new StatefulGridFieldState($this);
@@ -26,10 +28,11 @@ class StatefulGridField extends GridField {
     
     /**
      * Sets the gridfield config ensuring that the save handler is in place
-	 * @param {GridFieldConfig} $config
-	 * @return {GridField}
-	 */
-	public function setConfig(GridFieldConfig $config) {
+     * @param {GridFieldConfig} $config
+     * @return {GridField}
+     */
+    public function setConfig(GridFieldConfig $config)
+    {
         parent::setConfig($config);
         
         //Force the StatefulGridFieldListSaveHandler into the config
@@ -43,8 +46,9 @@ class StatefulGridField extends GridField {
      * @param {string} $action Action to append to the url
      * @return {string} Relative link to this form field
      */
-    public function Link($action=null) {
-        if($this->list instanceof StatefulGridFieldList) {
+    public function Link($action=null)
+    {
+        if ($this->list instanceof StatefulGridFieldList) {
             return Controller::join_links(parent::Link($action), '?'.strtolower($this->name).'_skey='.$this->state->getSessionKey());
         }
         
@@ -52,32 +56,34 @@ class StatefulGridField extends GridField {
     }
     
     /**
-	 * Set the datasource. If the list is an instance of UnsavedRelationList the list is converted to a StatefulGridFieldList. If the state is empty then it tries to restore the state from the session.
-	 * @param {SS_List} $list List to use in the Grid
-	 */
-	public function setList(SS_List $list) {
-        if($list instanceof UnsavedRelationList && !($list instanceof StatefulGridFieldList)) {
+     * Set the datasource. If the list is an instance of UnsavedRelationList the list is converted to a StatefulGridFieldList. If the state is empty then it tries to restore the state from the session.
+     * @param {SS_List} $list List to use in the Grid
+     */
+    public function setList(SS_List $list)
+    {
+        if ($list instanceof UnsavedRelationList && !($list instanceof StatefulGridFieldList)) {
             $list=new StatefulGridFieldList($this, $list->getField('baseClass'), $list->getField('relationName'), $list->dataClass());
             
             $stateValue=$this->state->getData()->toArray();
-            if(empty($stateValue) && !empty($this->form)) {
+            if (empty($stateValue) && !empty($this->form)) {
                 $this->state->restoreFromSession();
             }
         }
         
-		return parent::setList($list);
+        return parent::setList($list);
     }
     
     /**
      * Set the container form. If the list is an instance of StatefulGridFieldList and the state is empty it tries to restore the state from the session.
      * @param {Form} $form Form to be used
      */
-    public function setForm($form) {
+    public function setForm($form)
+    {
         $return=parent::setForm($form);
         
-        if($this->list instanceof StatefulGridFieldList) {
+        if ($this->list instanceof StatefulGridFieldList) {
             $stateValue=$this->state->getData()->toArray();
-            if(empty($stateValue) && !empty($this->form)) {
+            if (empty($stateValue) && !empty($this->form)) {
                 $this->state->restoreFromSession();
             }
         }
@@ -85,4 +91,3 @@ class StatefulGridField extends GridField {
         return $return;
     }
 }
-?>
